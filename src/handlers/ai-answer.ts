@@ -2,7 +2,7 @@ import { markdownToHtml } from "../lib/formatMarkdown";
 import { askDeepSeek } from "../services/ai";
 import { BotContext } from "../types/bot-types";
 
-export async function AiAnswerHandler(
+export async function   AiAnswerHandler(
   ctx: BotContext,
   next: () => Promise<void>
 ) {
