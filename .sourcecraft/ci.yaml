@@ -11,7 +11,7 @@ on:
 
 tokens:
   SERVICE_CONNECTION_WITH_TOKEN:
-    service_connection: "default-service-connection"
+    service_connection: "test-connection"
     scope: org
 
 workflows:
