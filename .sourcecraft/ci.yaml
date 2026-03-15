@@ -25,13 +25,13 @@ workflows:
         type: string
         default: "YOUR_TG_BOT_TOKEN"
         description: Your Telegram bot token from BotFather
-      DEEPSEEK_API_KEY:
+      API_DEEPSEEK_KEY:
         type: string
         description: Your DeepSeek API key
     env:
       YC_BOT_NAME: ${{ inputs.bot-username }}
       TG_BOT_TOKEN: ${{ inputs.bot-token }}
-      DEEPSEEK_API_KEY: ${{ inputs.deepseek-api-key }}
+      API_DEEPSEEK_KEY: ${{ inputs.API_DEEPSEEK_KEY }}
     tasks:
       - name: deploy-tg-backend-task
         cubes: 
@@ -55,7 +55,7 @@ workflows:
               YC_FUNCTION_RUNTIME: nodejs22
               YC_FUNCTION_ENTRYPOINT: index.handler
               SOURCE_PATH: "./deploy"
-              ENVIRONMENT: "BOT_TOKEN=${{ inputs.bot-token }}, DEEPSEEK_API_KEY=${{ inputs.deepseek-api-key }}"
+              ENVIRONMENT: "BOT_TOKEN=${{ inputs.bot-token }}, API_DEEPSEEK_KEY=${{ inputs.API_DEEPSEEK_KEY }}"
               PUBLIC: true
             image: cr.yandex/sourcecraft/yc-function:latest
 
