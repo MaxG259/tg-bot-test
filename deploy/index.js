@@ -6375,7 +6375,7 @@ var require_lib2 = __commonJS({
       return ex && typeof ex === "object" && "default" in ex ? ex["default"] : ex;
     }
     var Stream2 = _interopDefault(require("stream"));
-    var http = _interopDefault(require("http"));
+    var http2 = _interopDefault(require("http"));
     var Url = _interopDefault(require("url"));
     var whatwgUrl = _interopDefault(require_public_api());
     var https = _interopDefault(require("https"));
@@ -7115,7 +7115,7 @@ var require_lib2 = __commonJS({
       return headers;
     }
     var INTERNALS$1 = /* @__PURE__ */ Symbol("Response internals");
-    var STATUS_CODES = http.STATUS_CODES;
+    var STATUS_CODES = http2.STATUS_CODES;
     var Response2 = class _Response {
       constructor() {
         let body = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : null;
@@ -7368,7 +7368,7 @@ var require_lib2 = __commonJS({
       return new fetch2.Promise(function(resolve, reject) {
         const request = new Request(url, opts);
         const options = getNodeRequestOptions(request);
-        const send = (options.protocol === "https:" ? https : http).request;
+        const send = (options.protocol === "https:" ? https : http2).request;
         const signal = request.signal;
         let response = null;
         const abort = function abort2() {
@@ -13621,7 +13621,7 @@ var require_frameworks = __commonJS({
         handlerReturn: new Promise((res) => resolveResponse = res)
       };
     };
-    var http = (req, res) => {
+    var http2 = (req, res) => {
       const secretHeaderFromRequest = req.headers[SECRET_HEADER_LOWERCASE];
       return {
         get update() {
@@ -13792,8 +13792,8 @@ var require_frameworks = __commonJS({
       express,
       fastify,
       hono,
-      http,
-      https: http,
+      http: http2,
+      https: http2,
       koa,
       "next-js": nextJs,
       nhttp,
@@ -13974,6 +13974,7 @@ __export(index_exports, {
   handler: () => handler
 });
 module.exports = __toCommonJS(index_exports);
+var import_http = __toESM(require("http"));
 
 // node_modules/dotenv/config.js
 (function() {
@@ -21100,11 +21101,18 @@ var handler = async function(event, context) {
   }
   return { statusCode: 200, body: "" };
 };
-if (process.env.NODE_ENV === "development") {
-  bot.start({ onStart: () => {
-    console.log("Bot started");
-  } });
+if (!process.env.FUNCTION_NAME) {
+  bot.start({
+    onStart: () => {
+      console.log("Bot started");
+    }
+  });
 }
+var PORT = process.env.PORT || 3e3;
+import_http.default.createServer((_, res) => {
+  res.writeHead(200);
+  res.end("Bot is alive!");
+}).listen(PORT);
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   handler
