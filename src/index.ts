@@ -27,6 +27,8 @@ const PORT = process.env.PORT || 3000
 http
   .createServer((_, res) => {
     res.writeHead(200)
-    res.end('Bot is alive!')
+    res.end('OK')
   })
-  .listen(PORT)
+  .listen(PORT, () => {
+    console.log(`Health server on port ${PORT}`)
+  })

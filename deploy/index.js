@@ -21111,8 +21111,10 @@ if (!process.env.FUNCTION_NAME) {
 var PORT = process.env.PORT || 3e3;
 import_http.default.createServer((_, res) => {
   res.writeHead(200);
-  res.end("Bot is alive!");
-}).listen(PORT);
+  res.end("OK");
+}).listen(PORT, () => {
+  console.log(`Health server on port ${PORT}`);
+});
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   handler
