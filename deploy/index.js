@@ -13987,7 +13987,7 @@ module.exports = __toCommonJS(index_exports);
 })();
 
 // src/bot.ts
-var import_grammy = __toESM(require_mod2(), 1);
+var import_grammy = __toESM(require_mod2());
 
 // src/lib/formatMarkdown.ts
 function escapeHtml(str2) {
