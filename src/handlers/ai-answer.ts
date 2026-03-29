@@ -1,37 +1,42 @@
-import { markdownToHtml } from "../lib/formatMarkdown";
-import { askDeepSeek } from "../services/ai";
-import { BotContext } from "../types/bot-types";
+import { markdownToHtml } from '../lib/formatMarkdown'
+import { askDeepSeek } from '../services/ai'
+import { BotContext } from '../types/bot-types'
 
-export async function   AiAnswerHandler(
+export async function AiAnswerHandler(
   ctx: BotContext,
   next: () => Promise<void>
 ) {
-  const message = ctx.message?.text;
+  const message = ctx.message?.text
+  const isGroup = ctx.chat?.type !== 'private'
 
-  if (!ctx.session.waitingForAI) {
-    return next();
+  // В группе отвечаем сразу, в личке — только если waitingForAI
+  if (!isGroup && !ctx.session.waitingForAI) {
+    return next()
   }
 
   if (!message) {
-    return next();
+    return next()
   }
 
-  ctx.session.waitingForAI = false;
+  ctx.session.waitingForAI = false
 
-  const thinkingMessage = await ctx.reply("Думаю... ⏳");
-
-  const safeDelete = () =>
-    ctx.api.deleteMessage(ctx.chat!.id, thinkingMessage.message_id);
+  const thinkingMessage = await ctx.reply('🎤')
 
   try {
-    const response = await askDeepSeek(message);
-    await ctx.reply(markdownToHtml(response), { parse_mode: "HTML" });
+    // Убираем упоминание бота из текста перед отправкой
+    const cleanMessage = message.replace(/@\w+/g, '').trim()
+    const response = await askDeepSeek(cleanMessage || message)
+    await ctx.reply(markdownToHtml(response), { parse_mode: 'HTML' })
+
+    if (!isGroup) {
+      ctx.session.waitingForAI = true
+    }
   } catch (error) {
-    console.error(error);
-    await ctx.reply(
-      "Произошла ошибка при обработке вашего запроса. Попробуйте позже."
-    );
+    console.error(error)
+    await ctx.reply('чёт сломался бро 💀')
   } finally {
-    safeDelete();
+    await ctx.api.deleteMessage(ctx.chat!.id, thinkingMessage.message_id)
   }
+
+  return next()
 }

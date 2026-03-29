@@ -1,17 +1,17 @@
 on:
   #push:
   #  - workflows: deploy-tg-bot-workflow
-  #    filter: 
+  #    filter:
   #      branches: ["master", "main"]
   pull_request:
     - workflows: deploy-tg-bot-workflow
       filter:
-        source_branches: ["**", "!test**"]
-        target_branches: "main"
+        source_branches: ['**', '!test**']
+        target_branches: 'main'
 
 tokens:
   SERVICE_CONNECTION_WITH_TOKEN:
-    service_connection: "test-connection"
+    service_connection: 'test-connection'
     scope: org
 
 workflows:
@@ -23,18 +23,18 @@ workflows:
         description: Your Telegram bot username without _bot from BotFather. Name must match the pattern /|[a-z][-a-z0-9]{1,61}[a-z0-9]/
       bot-token:
         type: string
-        default: "YOUR_TG_BOT_TOKEN"
+        default: 'YOUR_TG_BOT_TOKEN'
         description: Your Telegram bot token from BotFather
-      API_DEEPSEEK_KEY:
+      OPENROUTER_API_KEY:
         type: string
-        description: Your DeepSeek API key
+        description: Your OpenRouter API key
     env:
       YC_BOT_NAME: ${{ inputs.bot-username }}
       TG_BOT_TOKEN: ${{ inputs.bot-token }}
-      API_DEEPSEEK_KEY: ${{ inputs.API_DEEPSEEK_KEY }}
+      OPENROUTER_API_KEY: ${{ inputs.OPENROUTER_API_KEY }}
     tasks:
       - name: deploy-tg-backend-task
-        cubes: 
+        cubes:
           - name: format-name
             script:
               - |
@@ -45,18 +45,18 @@ workflows:
               - |
                 npm install
                 npm run build
-                
+
           - name: deploy-func
             env:
               ID_TOKEN: ${{ tokens.SERVICE_CONNECTION_WITH_TOKEN.id_token }}
-              YC_SA_ID: ${{ tokens.SERVICE_CONNECTION_WITH_TOKEN.service_account_id }}  
-              YC_FOLDER_ID: ${{ tokens.SERVICE_CONNECTION_WITH_TOKEN.folder_id }} 
+              YC_SA_ID: ${{ tokens.SERVICE_CONNECTION_WITH_TOKEN.service_account_id }}
+              YC_FOLDER_ID: ${{ tokens.SERVICE_CONNECTION_WITH_TOKEN.folder_id }}
               YC_FUNCTION_NAME: ${{ cubes.format-name.outputs.function_name }}
               YC_FUNCTION_RUNTIME: nodejs22
-              YC_FUNCTION_TIMEOUT: "90"
+              YC_FUNCTION_TIMEOUT: '90'
               YC_FUNCTION_ENTRYPOINT: index.handler
-              SOURCE_PATH: "./deploy"
-              ENVIRONMENT: "BOT_TOKEN=${{ inputs.bot-token }},API_DEEPSEEK_KEY=${{ inputs.API_DEEPSEEK_KEY }}"
+              SOURCE_PATH: './deploy'
+              ENVIRONMENT: 'BOT_TOKEN=${{ inputs.bot-token }},OPENROUTER_API_KEY=${{ inputs.OPENROUTER_API_KEY }}'
               PUBLIC: true
             image: cr.yandex/sourcecraft/yc-function:latest
 
@@ -86,5 +86,3 @@ workflows:
               paths:
                 - invoke_url.txt
                 - deployment_location.txt
-
-            
